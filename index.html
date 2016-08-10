@@ -9,11 +9,7 @@
   <title>Pokemap Collector</title>
   <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/superhero/bootstrap.min.css" rel=
   "stylesheet">
-  <link href='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet'>
-  <!--[if lte IE 8]>
-        <link href='http://api.tiles.mapbox.com/mapbox.js/v1.4.0/mapbox.ie.css' rel='stylesheet'>
-      <![endif]-->
-
+  <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet'>
   <style>
         .starter-template {
             padding: 40px 15px;
@@ -47,23 +43,23 @@
 <body>
   <!--ADD THE FORM EMBEDURL BELOW-->
   <meta content=
-  "https://docs.google.com/forms/d/1mnZ4T62bZqxUCiMKvR1bX3o6-9nm7SiIqkWjcbB3jAE/viewform?embedded=true">
+  "https://docs.google.com/forms/d/e/1FAIpQLSdofNXwJ2Y97n2qeZrfllseYFZrFh10q0LcJYdbnhzJrcdUww/viewform?embedded=true">
   <!--ADD THE FORM RESPONSE ACTION HERE, WITH A REDIRECT-->
   <script type="text/javascript">
   var submitted=false;
   </script> <iframe id="hidden_iframe" name="hidden_iframe" onload=
-  "if(submitted) {window.location='http://wboykinm.github.io/geosprocket-labs/forms/gisdev/results/';}"
+  "if(submitted) {window.location='results/';}"
   style="display:none;"></iframe>
   <form action=
-  "https://docs.google.com/forms/d/1mnZ4T62bZqxUCiMKvR1bX3o6-9nm7SiIqkWjcbB3jAE/formResponse" id=
+  "https://docs.google.com/forms/d/e/1FAIpQLSdofNXwJ2Y97n2qeZrfllseYFZrFh10q0LcJYdbnhzJrcdUww/formResponse" id=
   "ss-form" method="post" name="ss-form" onsubmit="submitted=true;" target="hidden_iframe">
     <div class="container">
       <div class="jumbotron starter-template">
-        <h1>BTV Pokemap</h1>
+        <h1>Add a pokestop to the BTV Pokemap!</h1>
       </div>
       <div class="starter-template">
         <h2><em>(1)</em> What's the name of the closest landmark, business or intersection?</h2><input class="form-control" id=
-        "entry_1181185572" name="entry.1181185572" placeholder="Username" value="">
+        "entry_908361819" name="entry.908361819" placeholder="Pokestop name" value="">
       </div>
       <div class="starter-template">
         <h2><em>(2)</em> Where is this Pokestop?</h2>
@@ -76,8 +72,8 @@
                 THE "NAME" AND "ID" PARAMETERS MUST CORRESPOND TO
                 THOSE IN THE SOURCE OF THE GOOGLE-HOSTED LIVE FORM-->
         <!-- QUESTION 2: LAT/LONG -->
-        <input id="entry_1246820522" name="entry.1246820522" type="hidden" value=""> <input id=
-        "entry_1133398022" name="entry.1133398022" type="hidden" value=""> <!-- PAGE STUFF -->
+        <input id="entry_1512378770" name="entry.1512378770" type="hidden" value=""> <input id=
+        "entry_386385254" name="entry.386385254" type="hidden" value=""> <!-- PAGE STUFF -->
          <input name="pageNumber" type="hidden" value="0"> <input name="backupCache" type="hidden"
         value="">
       </div>
@@ -93,24 +89,27 @@
   </script> 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js">
   </script> 
-  <script src='https://api.mapbox.com/mapbox.js/v2.2.1/mapbox.js'>
+  <script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'>
   </script> 
   <script type='text/javascript'>
       // Set default location in case the IP doesn't have one
-      var y = 37.09024;
-      var x = -95.71289;
-        var z = 4;
-        $('#entry_1246820522').attr('value', y);
-        $('#entry_1133398022').attr('value', x);
+      var y = 44.4773;
+      var x = -73.2144;
+        var z = 15;
+        $('#entry_1512378770').attr('value', y);
+        $('#entry_386385254').attr('value', x);
 
         // Build the map
-        L.mapbox.accessToken = 'pk.eyJ1IjoiZmFyYWRheTIiLCJhIjoiTUVHbDl5OCJ9.buFaqIdaIM3iXr1BOYKpsQ';
-        var map = L.mapbox.map('map', 'landplanner.h1dknok1', {scrollWheelZoom:false}).setView([y, x], z);
+        L.mapbox.accessToken = 'pk.eyJ1IjoibGFuZHBsYW5uZXIiLCJhIjoicUtlZGgwYyJ9.UFYz8MD4lI4kIzk9bjGFvg';
+        var map = L.mapbox.map('map');
+        map.setView([y, x], z);
+        
+        var base = L.tileLayer('https://api.mapbox.com/styles/v1/landplanner/cirpalue40023guno4nmgz6xd/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibGFuZHBsYW5uZXIiLCJhIjoicUtlZGgwYyJ9.UFYz8MD4lI4kIzk9bjGFvg').addTo(map)
 
         // Update these values as the map gets dragged around
         map.on('moveend', function(event) {
-            $('#entry_1246820522').attr('value', map.getCenter().lat);
-            $('#entry_1133398022').attr('value', map.getCenter().lng);
+            $('#entry_1512378770').attr('value', map.getCenter().lat);
+            $('#entry_386385254').attr('value', map.getCenter().lng);
         });
 
         // Grab IP location from freegeoip API
@@ -120,8 +119,8 @@
           x = json.longitude;
                 z = 6
                 // Set form lat/lon fields from map center location
-            $('#entry_1246820522').attr('value', y);
-          $('#entry_1133398022').attr('value', x);
+            $('#entry_1512378770').attr('value', y);
+          $('#entry_386385254').attr('value', x);
                 map.panTo([y, x]);
             }
       });
