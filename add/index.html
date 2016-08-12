@@ -115,19 +115,20 @@
             $('#entry_1512378770').attr('value', map.getCenter().lat);
             $('#entry_386385254').attr('value', map.getCenter().lng);
         });
-
-        // Grab IP location from freegeoip API
-        $.getJSON('http://freegeoip.net/json/', function(json) {
-            if (json) {
-          y = json.latitude;
-          x = json.longitude;
-                z = 6
-                // Set form lat/lon fields from map center location
+        
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            y = position.coords.latitude;
+            x = position.coords.longitude;
+            z = 6
+            // Set form lat/lon fields from map center location
             $('#entry_1512378770').attr('value', y);
-          $('#entry_386385254').attr('value', x);
-                map.panTo([y, x]);
-            }
-      });
+            $('#entry_386385254').attr('value', x);
+            map.panTo([y, x]);
+          });
+        } else {
+          console.log('defaulting to city hall park')
+        }
   </script>
 </body>
 </html>
