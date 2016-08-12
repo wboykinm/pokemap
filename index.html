@@ -1,46 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset=utf-8 />
-<title>BTV Pokemap</title>
-<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-<meta property="og:site_name" content="BTV Pokemap"/>
-<meta property="og:title" content="BTV Pokemap"/>
-<meta property="og:description" content="Find and add pokestops around Burlington, VT"/>
-<meta property="og:image" content="preview.png">
-<link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
-<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/paper/bootstrap.min.css" rel="stylesheet">
-<style>
-  body { margin:0; padding:0; }
-  #map { position:absolute; top:0; bottom:0; width:100%; }
-</style>
+    <meta charset='utf-8' />
+    <title></title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <meta property="og:site_name" content="BTV Pokemap"/>
+    <meta property="og:title" content="BTV Pokemap"/>
+    <meta property="og:description" content="Find and add pokestops around Burlington, VT"/>
+    <meta property="og:image" content="preview.png">
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.22.0/mapbox-gl.css' rel='stylesheet' />
+    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/paper/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+        #content {
+          border-top: solid 1px #333;
+          position:absolute;
+          left:0;
+          right:0;
+          min-height:100px;
+          bottom:0;
+          background:RGBA(214, 255, 200, 0.9);
+        }
+          .sidecontainer {
+          padding:20px;
+        }
+    </style>
 </head>
 <body>
+
 <style>
-  .leaflet-popup-content-wrapper {
-    background: #227FBB; !important
-  }
-  .leaflet-popup-tip {
-    border-top: 10px solid #227FBB; !important
-  }
-  div.marker-title {
-    color: #fff; !important
-  }
-  #content {
-    position:absolute;
-    left:0;
-    right:0;
-    min-height:100px;
-    bottom:0;
-    background:RGBA(214, 255, 200, 0.9);
-  }
-    .sidecontainer {
-    padding:20px;
-  }
+.marker {
+    display: block;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    background-color:rgba(0,0,0,0);
+}
 </style>
 
 <div id='map'></div>
-
 <div id='content'>
   <div class="sidecontainer">
     <div class="row">
@@ -50,21 +50,15 @@
     </div>    
   </div>
 </div>
-
-<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.22.0/mapbox-gl.js'></script>
 <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
-<script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
 
 <script>
+mapboxgl.accessToken = 'pk.eyJ1IjoibGFuZHBsYW5uZXIiLCJhIjoicUtlZGgwYyJ9.UFYz8MD4lI4kIzk9bjGFvg';
 $.getJSON("https://spreadsheets.google.com/feeds/list/1IiRzXl5QMbEL7T2GEtOJ8TM9N6iHnlVsajH36lWkInI/1/public/values?alt=json", function(data) {
-  L.mapbox.accessToken = 'pk.eyJ1IjoibGFuZHBsYW5uZXIiLCJhIjoicUtlZGgwYyJ9.UFYz8MD4lI4kIzk9bjGFvg';
-  var map = L.mapbox.map('map');
-  console.log(data.feed.entry)
-  var base = L.tileLayer('https://api.mapbox.com/styles/v1/landplanner/cirpalue40023guno4nmgz6xd/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibGFuZHBsYW5uZXIiLCJhIjoicUtlZGgwYyJ9.UFYz8MD4lI4kIzk9bjGFvg').addTo(map)
-  
-  console.log(data.feed.entry)
+  // create the geojson in question
   var stops = data.feed.entry;
-
   var pokeGeojson = {type: 'FeatureCollection', features: []};
 
   for (var i in stops) {
@@ -72,11 +66,7 @@ $.getJSON("https://spreadsheets.google.com/feeds/list/1IiRzXl5QMbEL7T2GEtOJ8TM9N
       var feature = {
         type: 'Feature',
         properties: {
-          title: '<h1>' + stops[i].gsx$name.$t + '</h1>',
-          'marker-color': '#16264E',
-          'marker-size': 'large',
-          'marker-symbol': 'roadblock'//,
-          //url: 'https://gisdevs.slack.com/team/' + stops[i].gsx$name.$t
+          name: '<h1>' + stops[i].gsx$name.$t + '</h1>'
         },
         geometry: {
           type: 'Point',
@@ -86,24 +76,39 @@ $.getJSON("https://spreadsheets.google.com/feeds/list/1IiRzXl5QMbEL7T2GEtOJ8TM9N
       pokeGeojson.features.push(feature);
     }
   }
+  
+  // define the map and add the stops
+  var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/landplanner/cirpalue40023guno4nmgz6xd',
+    center: [-73.2131, 44.4772],
+    zoom: 16.5,
+    bearing: 267,
+    pitch: 60
+  });
 
-  var myLayer = L.mapbox.featureLayer().addTo(map);
+  // add markers to map
+  pokeGeojson.features.forEach(function(marker) {
+    // create an img element for the marker
+    var el = document.createElement('button');
+    el.className = 'marker';
+    el.style.backgroundImage = 'url(img/pokestop_small2.png)';
+    el.style.width = '50px';
+    el.style.height = '50px';
 
-  myLayer.setGeoJSON(pokeGeojson);
-  myLayer.on('mouseover', function(e) {
-      e.layer.openPopup();
+    el.addEventListener('click', function() {
+      console.log(marker.geometry.coordinates);
+      map.flyTo({center: marker.geometry.coordinates});
+    });
+
+    // add marker to map
+    new mapboxgl.Marker(el)
+      .setLngLat(marker.geometry.coordinates)
+      .addTo(map);
   });
-  myLayer.on('mouseout', function(e) {
-      e.layer.closePopup();
-  });
-  myLayer.on('click', function(e) {
-    window.open(e.layer.feature.properties.url);
-  });
-  map.setView([44.4773, -73.2144], 14);
-  map.fitBounds(myLayer.getBounds());
-});
+  map.addControl(new mapboxgl.Navigation());
+})
 </script>
-
 
 </body>
 </html>
